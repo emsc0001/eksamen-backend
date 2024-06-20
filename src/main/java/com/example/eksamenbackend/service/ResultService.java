@@ -1,5 +1,3 @@
-package com.example.eksamenbackend.service;
-
 import com.example.eksamenbackend.entity.Result;
 import com.example.eksamenbackend.repository.ResultRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +35,17 @@ public class ResultService {
 
     public void deleteResult(Long id) {
         resultRepository.deleteById(id);
+    }
+
+    public List<Result> getResultsByDiscipline(Long disciplineId) {
+        return resultRepository.findByDisciplineIdOrderByResultValueAsc(disciplineId);
+    }
+
+    public List<Result> getResultsByDisciplineAndGender(Long disciplineId, String gender) {
+        return resultRepository.findByDisciplineIdAndParticipantGenderOrderByResultValueAsc(disciplineId, gender);
+    }
+
+    public List<Result> getResultsByDisciplineAndAgeGroup(Long disciplineId, int startAge, int endAge) {
+        return resultRepository.findByDisciplineIdAndParticipantAgeBetweenOrderByResultValueAsc(disciplineId, startAge, endAge);
     }
 }
