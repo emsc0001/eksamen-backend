@@ -1,3 +1,5 @@
+package com.example.eksamenbackend.service;
+
 import com.example.eksamenbackend.entity.Result;
 import com.example.eksamenbackend.repository.ResultRepository;
 import org.springframework.beans.factory.annotation.Autowired;

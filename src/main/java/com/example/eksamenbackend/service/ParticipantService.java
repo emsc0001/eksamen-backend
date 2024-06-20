@@ -58,4 +58,3 @@ public class ParticipantService {
         return "";
     }
 }
-

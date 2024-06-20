@@ -1,3 +1,5 @@
+package com.example.eksamenbackend.controller;
+
 import com.example.eksamenbackend.entity.Result;
 import com.example.eksamenbackend.service.ResultService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/results")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ResultController {
 
     @Autowired
@@ -39,20 +42,5 @@ public class ResultController {
     public ResponseEntity<Void> deleteResult(@PathVariable Long id) {
         resultService.deleteResult(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/discipline/{disciplineId}")
-    public List<Result> getResultsByDiscipline(@PathVariable Long disciplineId) {
-        return resultService.getResultsByDiscipline(disciplineId);
-    }
-
-    @GetMapping("/discipline/{disciplineId}/gender/{gender}")
-    public List<Result> getResultsByDisciplineAndGender(@PathVariable Long disciplineId, @PathVariable String gender) {
-        return resultService.getResultsByDisciplineAndGender(disciplineId, gender);
-    }
-
-    @GetMapping("/discipline/{disciplineId}/ageGroup")
-    public List<Result> getResultsByDisciplineAndAgeGroup(@PathVariable Long disciplineId, @RequestParam int startAge, @RequestParam int endAge) {
-        return resultService.getResultsByDisciplineAndAgeGroup(disciplineId, startAge, endAge);
     }
 }
