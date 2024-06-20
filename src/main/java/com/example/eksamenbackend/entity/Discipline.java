@@ -1,12 +1,13 @@
 package com.example.eksamenbackend.entity;
 
-import jakarta.persistence.*;
-
-import java.util.HashSet;
-import java.util.Set;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
 public class Discipline {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,10 +15,14 @@ public class Discipline {
     private String name;
     private String resultType;
 
-    @ManyToMany(mappedBy = "disciplines")
-    private Set<Participant> participants = new HashSet<>();
+    public Discipline() {
+    }
 
-    // Getters and setters...
+    public Discipline(String name, String resultType) {
+        this.name = name;
+        this.resultType = resultType;
+    }
+
     public Long getId() {
         return id;
     }
@@ -40,13 +45,5 @@ public class Discipline {
 
     public void setResultType(String resultType) {
         this.resultType = resultType;
-    }
-
-    public Set<Participant> getParticipants() {
-        return participants;
-    }
-
-    public void setParticipants(Set<Participant> participants) {
-        this.participants = participants;
     }
 }
