@@ -12,6 +12,7 @@ import java.util.List;
 @RequestMapping("/api/participants")
 @CrossOrigin(origins = "http://localhost:5173")
 public class ParticipantController {
+
     @Autowired
     private ParticipantService participantService;
 
@@ -27,7 +28,7 @@ public class ParticipantController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Participant> getParticipantById(@PathVariable Long id) {
-        Participant participant = participantService.getParticipantById(id).orElseThrow();
+        Participant participant = participantService.getParticipantById(id).orElseThrow(() -> new RuntimeException("Participant not found"));
         return ResponseEntity.ok(participant);
     }
 
