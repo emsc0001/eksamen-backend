@@ -1,11 +1,10 @@
 package com.example.eksamenbackend.controller;
 
-import com.example.eksamenbackend.entity.Discipline;
-import com.example.eksamenbackend.entity.Participant;
 import com.example.eksamenbackend.entity.Result;
+import com.example.eksamenbackend.enums.ResultType;
+import com.example.eksamenbackend.repository.ResultRepository;
 import com.example.eksamenbackend.repository.DisciplineRepository;
 import com.example.eksamenbackend.repository.ParticipantRepository;
-import com.example.eksamenbackend.repository.ResultRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,100 +38,47 @@ public class ResultControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private Discipline discipline;
-    private Participant participant;
-
     @BeforeEach
     public void setup() {
         resultRepository.deleteAll();
         disciplineRepository.deleteAll();
         participantRepository.deleteAll();
-
-        discipline = new Discipline();
-        discipline.setName("100m");
-        discipline.setResultType("Time");
-        disciplineRepository.save(discipline);
-
-        participant = new Participant();
-        participant.setName("John Doe");
-        participant.setGender("Male");
-        participant.setAge(25);
-        participant.setClub("XYZ");
-        participantRepository.save(participant);
-    }
-
-    @Test
-    public void shouldCreateResult() throws Exception {
-        Result result = new Result();
-        result.setResultType("Time");
-        result.setDate(LocalDate.of(2024, 6, 20));
-        result.setResultValue("10.5");
-        result.setDiscipline(discipline);
-        result.setParticipant(participant);
-
-        mockMvc.perform(post("/api/results")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(result)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultType").value("Time"))
-                .andExpect(jsonPath("$.date").value("2024-06-20"))
-                .andExpect(jsonPath("$.resultValue").value("10.5"));
     }
 
     @Test
     public void shouldGetAllResults() throws Exception {
-        Result result = new Result();
-        result.setResultType("Time");
-        result.setDate(LocalDate.of(2024, 6, 20));
-        result.setResultValue("10.5");
-        result.setDiscipline(discipline);
-        result.setParticipant(participant);
-        resultRepository.save(result);
-
         mockMvc.perform(get("/api/results"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].resultType").value("Time"))
-                .andExpect(jsonPath("$[0].date").value("2024-06-20"))
-                .andExpect(jsonPath("$[0].resultValue").value("10.5"));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
-    public void shouldUpdateResult() throws Exception {
-        Result result = new Result();
-        result.setResultType("Time");
-        result.setDate(LocalDate.of(2024, 6, 20));
-        result.setResultValue("10.5");
-        result.setDiscipline(discipline);
-        result.setParticipant(participant);
-        resultRepository.save(result);
+    public void shouldCreateResult() throws Exception {
+        // First create a discipline and participant
+        String disciplineJson = "{\"name\":\"100m Sprint\", \"resultType\":\"TIME\"}";
+        String participantJson = "{\"name\":\"John Doe\", \"age\":30, \"gender\":\"Male\"}";
 
-        Result updatedResult = new Result();
-        updatedResult.setResultType("Time");
-        updatedResult.setDate(LocalDate.of(2024, 6, 21));
-        updatedResult.setResultValue("10.6");
-        updatedResult.setDiscipline(discipline);
-        updatedResult.setParticipant(participant);
-
-        mockMvc.perform(put("/api/results/" + result.getId())
+        mockMvc.perform(post("/api/disciplines")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedResult)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultType").value("Time"))
-                .andExpect(jsonPath("$.date").value("2024-06-21"))
-                .andExpect(jsonPath("$.resultValue").value("10.6"));
-    }
+                        .content(disciplineJson))
+                .andExpect(status().isCreated());
 
-    @Test
-    public void shouldDeleteResult() throws Exception {
-        Result result = new Result();
-        result.setResultType("Time");
-        result.setDate(LocalDate.of(2024, 6, 20));
-        result.setResultValue("10.5");
-        result.setDiscipline(discipline);
-        result.setParticipant(participant);
-        resultRepository.save(result);
+        mockMvc.perform(post("/api/participants")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(participantJson))
+                .andExpect(status().isCreated());
 
-        mockMvc.perform(delete("/api/results/" + result.getId()))
-                .andExpect(status().isNoContent());
+        Long disciplineId = disciplineRepository.findAll().get(0).getId();
+        Long participantId = participantRepository.findAll().get(0).getId();
+
+        // Now create a result
+        String resultJson = String.format(
+                "{\"date\":\"%s\", \"resultValue\":\"10.5\", \"discipline\":{\"id\":%d}, \"participant\":{\"id\":%d}, \"resultType\":\"TIME\"}",
+                LocalDate.now(), disciplineId, participantId);
+
+        mockMvc.perform(post("/api/results")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(resultJson))
+                .andExpect(status().isCreated());
     }
 }

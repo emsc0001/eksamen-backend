@@ -3,14 +3,12 @@ package com.example.eksamenbackend.controller;
 import com.example.eksamenbackend.entity.Result;
 import com.example.eksamenbackend.service.ResultService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/results")
-@CrossOrigin(origins = "http://localhost:5173")
 public class ResultController {
 
     @Autowired
@@ -23,24 +21,22 @@ public class ResultController {
 
     @GetMapping("/{id}")
     public Result getResultById(@PathVariable Long id) {
-        return resultService.getResultById(id);
+        return resultService.getResultById(id)
+                .orElseThrow(() -> new RuntimeException("Result not found"));
     }
 
     @PostMapping
-    public ResponseEntity<Result> createResult(@RequestBody Result result) {
-        Result savedResult = resultService.createResult(result);
-        return ResponseEntity.ok(savedResult);
+    public List<Result> createResults(@RequestBody List<Result> results) {
+        return resultService.createResults(results);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Result> updateResult(@PathVariable Long id, @RequestBody Result result) {
-        Result updatedResult = resultService.updateResult(id, result);
-        return ResponseEntity.ok(updatedResult);
+    public Result updateResult(@PathVariable Long id, @RequestBody Result result) {
+        return resultService.updateResult(id, result);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteResult(@PathVariable Long id) {
+    public void deleteResult(@PathVariable Long id) {
         resultService.deleteResult(id);
-        return ResponseEntity.noContent().build();
     }
 }
