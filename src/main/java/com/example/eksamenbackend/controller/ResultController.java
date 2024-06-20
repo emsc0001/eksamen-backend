@@ -3,14 +3,13 @@ package com.example.eksamenbackend.controller;
 import com.example.eksamenbackend.entity.Result;
 import com.example.eksamenbackend.service.ResultService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/results")
-@CrossOrigin(origins = "http://localhost:5173")
 public class ResultController {
 
     @Autowired
@@ -22,22 +21,25 @@ public class ResultController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Result> getResultById(@PathVariable Long id) {
+    public Result getResultById(@PathVariable Long id) {
         return resultService.getResultById(id);
     }
 
     @PostMapping
-    public Result createResult(@RequestBody Result result) {
-        return resultService.createResult(result);
+    public ResponseEntity<Result> createResult(@RequestBody Result result) {
+        Result savedResult = resultService.createResult(result);
+        return ResponseEntity.ok(savedResult);
     }
 
     @PutMapping("/{id}")
-    public Result updateResult(@PathVariable Long id, @RequestBody Result result) {
-        return resultService.updateResult(id, result);
+    public ResponseEntity<Result> updateResult(@PathVariable Long id, @RequestBody Result result) {
+        Result updatedResult = resultService.updateResult(id, result);
+        return ResponseEntity.ok(updatedResult);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteResult(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteResult(@PathVariable Long id) {
         resultService.deleteResult(id);
+        return ResponseEntity.noContent().build();
     }
 }

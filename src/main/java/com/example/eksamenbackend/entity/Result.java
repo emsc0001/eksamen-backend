@@ -1,7 +1,6 @@
 package com.example.eksamenbackend.entity;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 @Entity
@@ -15,11 +14,11 @@ public class Result {
     private String resultValue;
 
     @ManyToOne
-    @JoinColumn(name = "participant_id", nullable = false)
+    @JoinColumn(name = "participant_id")
     private Participant participant;
 
     @ManyToOne
-    @JoinColumn(name = "discipline_id", nullable = false)
+    @JoinColumn(name = "discipline_id")
     private Discipline discipline;
 
     // Getters and setters...
