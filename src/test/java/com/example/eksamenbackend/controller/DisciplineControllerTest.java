@@ -1,28 +1,76 @@
 package com.example.eksamenbackend.controller;
 
+import com.example.eksamenbackend.entity.Discipline;
+import com.example.eksamenbackend.repository.DisciplineRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class DisciplineControllerTest {
+@SpringBootTest
+@AutoConfigureMockMvc
+public class DisciplineControllerTest {
 
-    @Test
-    void createDiscipline() {
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private DisciplineRepository disciplineRepository;
+
+    @BeforeEach
+    public void setup() {
+        disciplineRepository.deleteAll();
     }
 
     @Test
-    void getAllDisciplines() {
+    public void shouldCreateDiscipline() throws Exception {
+        mockMvc.perform(post("/api/disciplines")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"100m\", \"resultType\": \"Time\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("100m"));
     }
 
     @Test
-    void getDisciplineById() {
+    public void shouldGetAllDisciplines() throws Exception {
+        Discipline discipline = new Discipline();
+        discipline.setName("100m");
+        discipline.setResultType("Time");
+        disciplineRepository.save(discipline);
+
+        mockMvc.perform(get("/api/disciplines"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("100m"));
     }
 
     @Test
-    void updateDiscipline() {
+    public void shouldUpdateDiscipline() throws Exception {
+        Discipline discipline = new Discipline();
+        discipline.setName("100m");
+        discipline.setResultType("Time");
+        disciplineRepository.save(discipline);
+
+        mockMvc.perform(put("/api/disciplines/" + discipline.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"200m\", \"resultType\": \"Time\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("200m"));
     }
 
     @Test
-    void deleteDiscipline() {
+    public void shouldDeleteDiscipline() throws Exception {
+        Discipline discipline = new Discipline();
+        discipline.setName("100m");
+        discipline.setResultType("Time");
+        disciplineRepository.save(discipline);
+
+        mockMvc.perform(delete("/api/disciplines/" + discipline.getId()))
+                .andExpect(status().isNoContent());
     }
 }
