@@ -42,4 +42,17 @@ public class ParticipantController {
         participantService.deleteParticipant(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/filter")
+    public List<Participant> filterParticipants(@RequestParam(required = false) String gender,
+                                                @RequestParam(required = false) String ageGroup,
+                                                @RequestParam(required = false) String club,
+                                                @RequestParam(required = false) Long disciplineId) {
+        return participantService.filterParticipants(gender, ageGroup, club, disciplineId);
+    }
+
+    @GetMapping("/search")
+    public List<Participant> searchParticipants(@RequestParam String query) {
+        return participantService.searchParticipants(query);
+    }
 }

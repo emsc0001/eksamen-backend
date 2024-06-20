@@ -1,9 +1,7 @@
 package com.example.eksamenbackend.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.eksamenbackend.enums.ResultType;
+import jakarta.persistence.*;
 
 @Entity
 public class Discipline {
@@ -13,12 +11,14 @@ public class Discipline {
     private Long id;
 
     private String name;
-    private String resultType;
+
+    @Enumerated(EnumType.STRING)
+    private ResultType resultType;
 
     public Discipline() {
     }
 
-    public Discipline(String name, String resultType) {
+    public Discipline(String name, ResultType resultType) {
         this.name = name;
         this.resultType = resultType;
     }
@@ -39,11 +39,11 @@ public class Discipline {
         this.name = name;
     }
 
-    public String getResultType() {
+    public ResultType getResultType() {
         return resultType;
     }
 
-    public void setResultType(String resultType) {
+    public void setResultType(ResultType resultType) {
         this.resultType = resultType;
     }
 }
